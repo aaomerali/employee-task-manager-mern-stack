@@ -50,7 +50,7 @@ const AppRoutes = () => {
         }
       />
       <Route
-        path="/admin/assign"
+        path="/admin/assign-tasks"
         element={
           <ProtectedRoute role="admin">
             <AssignTasks />
