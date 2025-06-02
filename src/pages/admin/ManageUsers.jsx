@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import Sidebar from '../../components/Sidebar'
-import { Pencil, Trash2 } from 'lucide-react';
+import Sidebar from '../../components/Sidebar';
+import { Pencil, Trash2, Search } from 'lucide-react';
 
 const dummyUsers = [
   { id: 1, name: 'John Doe', email: 'john@example.com', role: 'employee', status: 'active' },
@@ -10,6 +10,7 @@ const dummyUsers = [
 
 const ManageUsers = () => {
   const [users, setUsers] = useState(dummyUsers);
+  const [searchTerm, setSearchTerm] = useState('');
 
   const handleDelete = (id) => {
     setUsers((prev) => prev.filter((user) => user.id !== id));
@@ -25,12 +26,34 @@ const ManageUsers = () => {
     );
   };
 
+  const filteredUsers = users.filter((user) => {
+    const search = searchTerm.toLowerCase();
+    return (
+      user.name.toLowerCase().includes(search) ||
+      user.email.toLowerCase().includes(search) ||
+      user.role.toLowerCase().includes(search)
+    );
+  });
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-100 via-white to-purple-100 flex flex-col sm:flex-row p-4 gap-4">
       <Sidebar />
 
       <div className="flex-1 bg-white p-6 rounded-2xl shadow-2xl overflow-x-auto">
-        <h2 className="text-2xl font-bold mb-6 text-gray-800">Manage Users</h2>
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-4">
+          <h2 className="text-2xl font-bold text-gray-800">Manage Users</h2>
+
+          <div className="relative">
+            <input
+              type="text"
+              placeholder="Search by name, email, or role..."
+              className="pl-10 pr-4 py-2 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-400 shadow-sm w-full sm:w-80"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+            <Search className="absolute left-3 top-2.5 text-gray-400" size={18} />
+          </div>
+        </div>
 
         <table className="min-w-full text-left border border-gray-200 rounded-xl overflow-hidden">
           <thead className="bg-purple-100 text-purple-700">
@@ -43,7 +66,7 @@ const ManageUsers = () => {
             </tr>
           </thead>
           <tbody className="text-gray-700">
-            {users.map((user) => (
+            {filteredUsers.map((user) => (
               <tr key={user.id} className="hover:bg-purple-50 border-b">
                 <td className="px-4 py-3">{user.name}</td>
                 <td className="px-4 py-3">{user.email}</td>
@@ -77,10 +100,10 @@ const ManageUsers = () => {
                 </td>
               </tr>
             ))}
-            {users.length === 0 && (
+            {filteredUsers.length === 0 && (
               <tr>
                 <td colSpan={5} className="text-center text-gray-500 py-6">
-                  No users found.
+                  No users match your search.
                 </td>
               </tr>
             )}
