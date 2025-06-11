@@ -1,11 +1,12 @@
 import { useState } from 'react';
 import Sidebar from '../../components/Sidebar';
-import { Pencil, Trash2, Search } from 'lucide-react';
+import { Pencil, Trash2, Search, CheckCircle, XCircle } from 'lucide-react';
 
 const dummyUsers = [
   { id: 1, name: 'John Doe', email: 'john@example.com', role: 'employee', status: 'active' },
   { id: 2, name: 'Jane Smith', email: 'jane@example.com', role: 'admin', status: 'active' },
   { id: 3, name: 'Ali Yılmaz', email: 'ali@example.com', role: 'employee', status: 'inactive' },
+  { id: 4, name: 'Sara Nasser', email: 'sara@example.com', role: 'employee', status: 'pending' },
 ];
 
 const ManageUsers = () => {
@@ -22,6 +23,30 @@ const ManageUsers = () => {
         user.id === id
           ? { ...user, role: user.role === 'admin' ? 'employee' : 'admin' }
           : user
+      )
+    );
+  };
+
+  const handleApprove = (id) => {
+    setUsers((prev) =>
+      prev.map((user) =>
+        user.id === id ? { ...user, status: 'active' } : user
+      )
+    );
+  };
+
+  const handleReject = (id) => {
+    setUsers((prev) =>
+      prev.map((user) =>
+        user.id === id ? { ...user, status: 'inactive' } : user
+      )
+    );
+  };
+
+  const handleActivate = (id) => {
+    setUsers((prev) =>
+      prev.map((user) =>
+        user.id === id ? { ...user, status: 'active' } : user
       )
     );
   };
@@ -76,27 +101,62 @@ const ManageUsers = () => {
                     className={`px-2 py-1 text-sm rounded-full ${
                       user.status === 'active'
                         ? 'bg-green-100 text-green-600'
-                        : 'bg-red-100 text-red-600'
+                        : user.status === 'inactive'
+                        ? 'bg-yellow-100 text-yellow-600'
+                        : 'bg-gray-200 text-gray-600'
                     }`}
                   >
                     {user.status}
                   </span>
                 </td>
                 <td className="px-4 py-3 flex gap-2 justify-center">
-                  <button
-                    onClick={() => handleToggleRole(user.id)}
-                    className="text-blue-500 hover:text-blue-700"
-                    title="Toggle Role"
-                  >
-                    <Pencil size={18} />
-                  </button>
-                  <button
-                    onClick={() => handleDelete(user.id)}
-                    className="text-red-500 hover:text-red-700"
-                    title="Delete User"
-                  >
-                    <Trash2 size={18} />
-                  </button>
+                  {user.status === 'pending' && (
+                    <>
+                      <button
+                        onClick={() => handleApprove(user.id)}
+                        className="p-1 rounded-full bg-green-100 hover:bg-green-200"
+                        title="Approve"
+                      >
+                        <CheckCircle size={20} className="text-green-600" />
+                      </button>
+                      <button
+                        onClick={() => handleReject(user.id)}
+                        className="p-1 rounded-full bg-red-100 hover:bg-red-200"
+                        title="Reject"
+                      >
+                        <XCircle size={20} className="text-red-600" />
+                      </button>
+                    </>
+                  )}
+
+                  {user.status === 'inactive' && (
+                    <button
+                      onClick={() => handleActivate(user.id)}
+                      className="p-1 rounded-full bg-green-100 hover:bg-green-200"
+                      title="Activate"
+                    >
+                      <CheckCircle size={20} className="text-green-600" />
+                    </button>
+                  )}
+
+                  {user.status === 'active' && (
+                    <>
+                      <button
+                        onClick={() => handleToggleRole(user.id)}
+                        className="p-1 rounded-full bg-blue-100 hover:bg-blue-200"
+                        title="Toggle Role"
+                      >
+                        <Pencil size={18} className="text-blue-600" />
+                      </button>
+                      <button
+                        onClick={() => handleDelete(user.id)}
+                        className="p-1 rounded-full bg-red-100 hover:bg-red-200"
+                        title="Delete"
+                      >
+                        <Trash2 size={18} className="text-red-600" />
+                      </button>
+                    </>
+                  )}
                 </td>
               </tr>
             ))}
