@@ -12,6 +12,8 @@ const AssignTasks = () => {
   const [description, setDescription] = useState('');
   const [tasks, setTasks] = useState([]);
   const [filterUserId, setFilterUserId] = useState('');
+  const [filterStatus, setFilterStatus] = useState('');
+
 
   const handleAssignTask = () => {
     if (!selectedUserId || !title || !description) return;
@@ -24,7 +26,7 @@ const AssignTasks = () => {
       userName: user.name,
       title,
       description,
-      status: 'pending',
+      status: 'completed',
     };
 
     setTasks(prev => [...prev, newTask]);
@@ -37,9 +39,18 @@ const AssignTasks = () => {
     setTasks(prev => prev.filter(task => task.id !== taskId));
   };
 
+  {/*
   const filteredTasks = filterUserId
     ? tasks.filter(task => task.userId.toString() === filterUserId)
     : tasks;
+  */}
+
+  const filteredTasks = tasks.filter(task => {
+    const filterByUser = filterUserId? task.userId.toString() === filterUserId : true;
+    const filterByStatus = filterStatus? task.status === filterStatus : true
+
+    return filterByUser && filterByStatus;
+  })
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-100 via-white to-purple-100 flex flex-col sm:flex-row p-4 gap-4">
@@ -97,21 +108,37 @@ const AssignTasks = () => {
         </button>
 
         {/* Filter Section */}
-        <div className="mt-10 mb-4">
-          <label className="block text-sm font-medium text-gray-700 mb-1">Filter by Employee</label>
-          <select
-            value={filterUserId}
-            onChange={(e) => setFilterUserId(e.target.value)}
-            className="w-full md:w-64 px-4 py-2 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400"
-          >
-            <option value="">-- Show All --</option>
-            {dummyEmployees.map(user => (
-              <option key={user.id} value={user.id}>
-                {user.name}
-              </option>
-            ))}
-          </select>
+        <div className="mt-10 mb-4 grid md:grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Filter by Employee</label>
+            <select
+              value={filterUserId}
+              onChange={(e) => setFilterUserId(e.target.value)}
+              className="w-full px-4 py-2 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400"
+            >
+              <option value="">-- Show All --</option>
+              {dummyEmployees.map(user => (
+                <option key={user.id} value={user.id}>
+                  {user.name}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Filter by Status</label>
+            <select
+              value={filterStatus}
+              onChange={(e) => setFilterStatus(e.target.value)}
+              className="w-full px-4 py-2 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400"
+            >
+              <option value="">-- Show All --</option>
+              <option value="pending">Pending</option>
+              <option value="completed">Completed</option>
+            </select>
+          </div>
         </div>
+
 
         {/* Task List */}
         <div>
