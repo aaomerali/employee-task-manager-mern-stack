@@ -29,7 +29,7 @@ function Login() {
       } else if (email === 'employee@example.com' && password === 'employee') {
         const user = {
           id: '2',
-          name: 'Employee User',
+          name: 'Abdulrahman Omar',
           role: 'employee',
           token: 'fake-jwt-token',
         };
